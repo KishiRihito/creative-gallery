@@ -1,0 +1,19 @@
+.page {
+  padding: 0.875rem;
+  min-height: 100vh;
+  font-family: var(--font-geist-sans);
+
+  h1 {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    visibility: hidden;
+    height: 0;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+  }
+}
