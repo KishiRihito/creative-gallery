@@ -31,5 +31,8 @@
     "eslint-config-next": "15.3.4",
     "sass": "^1.89.2",
     "typescript": "^5"
+  },
+  "overrides": {
+    "vercel": "$vercel"
   }
 }
