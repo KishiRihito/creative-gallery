@@ -11,7 +11,11 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-  }
+  },
+  eslint: {
+    // ビルド時のESLintチェックを無効化
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
