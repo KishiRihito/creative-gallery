@@ -18,6 +18,9 @@ interface DialogProps {
   }
 }
 
+// TypeScriptのiframe型に未定義のため、スプレッドで付与する
+const credentiallessAttr = { credentialless: '' } as React.IframeHTMLAttributes<HTMLIFrameElement>;
+
 export const Dialog = ({ isOpen, setIsOpen, onClose, content }: React.PropsWithChildren<DialogProps>) => {
   const { lenis } = useLenis();
   // モーダル外をクリックした時の処理
@@ -78,6 +81,8 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: React.PropsWithC
                   src={content.embedUrl}
                   title={content.title}
                   allow="cross-origin-isolated"
+                  // COEP下でもCOEP未設定の外部文書(StackBlitz)を埋め込めるようにする(Chrome 110+)
+                  {...credentiallessAttr}
                   allowFullScreen
                   sandbox='allow-same-origin allow-scripts'
                 ></iframe>
