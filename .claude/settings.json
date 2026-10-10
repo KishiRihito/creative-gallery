@@ -1,0 +1,34 @@
+{
+  "env": {
+    "ANTHROPIC_MODEL": "opusplan",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(ln -s ../skills .claude/skills)",
+      "WebFetch(domain:plumeria.dev)",
+      "Bash(pnpm -v)",
+      "Bash(git checkout *)",
+      "Bash(nodenv install *)",
+      "Bash(nodenv local *)",
+      "Bash(nodenv version *)",
+      "Bash(pnpm import *)",
+      "Bash(rm -f package-lock.json)",
+      "Bash(rm -rf node_modules)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm node *)",
+      "Read(//Users/unt/.npm/lib/node_modules/pnpm/bin/**)",
+      "Bash(pnpm config *)",
+      "Read(//Users/unt/**)",
+      "Bash(env)",
+      "Bash(ls -la /Users/unt/.npm/bin/ | grep -i node; echo \"---resolved node in PATH order---\"; type -a node)",
+      "Read(//Users/unt/.npm/bin/**)",
+      "Bash(nodenv exec *)",
+      "Bash(NODENV_VERSION=22.18.0 pnpm exec node -v)",
+      "Bash(export NODENV_VERSION=22.18.0)"
+    ]
+  }
+}
