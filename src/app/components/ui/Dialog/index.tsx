@@ -77,6 +77,7 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: React.PropsWithC
                 <iframe
                   src={content.embedUrl}
                   title={content.title}
+                  allow="cross-origin-isolated"
                   allowFullScreen
                   sandbox='allow-same-origin allow-scripts'
                 ></iframe>
