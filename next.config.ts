@@ -12,6 +12,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // StackBlitz WebContainersのプレビューにはcross-origin isolationが必要
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+          // credentialless: 外部画像(Contentful等)を壊さずに分離を有効化できる
+          { key: "Cross-Origin-Embedder-Policy", value: "credentialless" },
+        ],
+      },
+    ];
+  },
   eslint: {
     // ビルド時のESLintチェックを無効化
     ignoreDuringBuilds: true,
