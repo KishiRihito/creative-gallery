@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run contentful:types || echo '[predev] Contentful型の更新に失敗したため既存の型で起動します'",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "contentful:types": "set -a && . ./.env.local && set +a && npx cf-content-types-generator@2.16.1 -s $CONTENTFUL_SPACE_ID -t $CONTENTFUL_MANAGEMENT_TOKEN -o src/app/types/contentful --v10",
     "pages:build": "npx @cloudflare/next-on-pages",
     "pages:deploy": "npx wrangler pages deploy .vercel/output/static",
     "pages:dev": "npx wrangler pages dev .vercel/output/static --compatibility-date=2024-09-23 --compatibility-flag=nodejs_compat"
