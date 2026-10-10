@@ -1,6 +1,9 @@
 import sdk from "@stackblitz/sdk";
 import { useEffect, useId, useRef } from "react";
 
+// COEP下でもCOEP未設定の外部文書を埋め込めるようにする(Chrome 110+)
+const credentiallessAttr = { credentialless: "" } as React.IframeHTMLAttributes<HTMLIFrameElement>;
+
 export const StackblitzEmbed = (props: { projectID: string }) => {
   // 複数同時に描画しても衝突しない一意のID
   const id = `stackblitz-embed-${useId().replace(/:/g, "")}`;
@@ -13,6 +16,7 @@ export const StackblitzEmbed = (props: { projectID: string }) => {
     // WebContainers(プレビュー)に必要。SDKは既存のiframeをそのまま利用するため、
     // allow属性を事前に付与しておけば再レンダリング不要
     iframe.setAttribute("allow", "cross-origin-isolated");
+    iframe.setAttribute("credentialless", "");
 
     sdk
       .embedProjectId(iframe, props.projectID, {
@@ -24,5 +28,5 @@ export const StackblitzEmbed = (props: { projectID: string }) => {
       });
   }, [props.projectID]);
 
-  return <iframe id={id} ref={iframeRef} title="Stackblitz embed" allow="cross-origin-isolated" />;
+  return <iframe id={id} ref={iframeRef} title="Stackblitz embed" allow="cross-origin-isolated" {...credentiallessAttr} />;
 };
