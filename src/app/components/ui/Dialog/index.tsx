@@ -3,19 +3,14 @@
 import { useEffect, useRef } from 'react';
 
 import style from './dialog.module.scss';
+import type { ContentItem } from "@/app/types/content";
 import { useLenis } from '@/app/contexts/LenisContext';
 
 interface DialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onClose?: () => void;
-  content: {
-    id: string;
-    title: string;
-    thumbnail?: string;
-    description?: string;
-    embedUrl?: string;
-  }
+  content: ContentItem;
 }
 
 // TypeScriptのiframe型に未定義のため、スプレッドで付与する

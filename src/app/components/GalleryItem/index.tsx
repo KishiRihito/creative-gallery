@@ -7,16 +7,11 @@ import { createPortal } from 'react-dom';
 import styles from "./galleryItem.module.scss";
 import { convertToHttpsUrl } from "@/app/utils/file";
 
+import type { ContentItem } from "@/app/types/content";
 import { Dialog } from "@/app/components/ui/Dialog";
 
 interface GalleryItemProps {
-  content: {
-    id: string;
-    title: string;
-    thumbnail?: string;
-    description?: string;
-    embedUrl?: string;
-  }
+  content: ContentItem;
 }
 
 export const GalleryItem = forwardRef<HTMLLIElement, GalleryItemProps>(({ content }, ref) => {
