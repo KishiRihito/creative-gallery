@@ -1,12 +1,71 @@
+// easeOutQuad
+$ease-out-quad: cubic-bezier(0.5, 1, 0.89, 1);
+$duration-open: 0.3s;
+$duration-close: 0.2s;
+
+@keyframes dialog-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialog-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dialog-content-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.98);
+  }
+}
+
 .dialog-overlay {
-  display: block;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   z-index: 1000;
-  width: 100%;
-  height: 100%;
   background-color: color-mix(in srgb, #000, transparent 40%);
+
+  &[data-state='open'] {
+    animation: dialog-overlay-in $duration-open $ease-out-quad both;
+  }
+
+  // 閉じアニメーション中は操作を受け付けない
+  &[data-state='closed'] {
+    pointer-events: none;
+    animation: dialog-overlay-out $duration-close $ease-out-quad both;
+  }
+
+  &[data-state='open'] .dialog-content {
+    animation: dialog-content-in $duration-open $ease-out-quad both;
+  }
+
+  &[data-state='closed'] .dialog-content {
+    animation: dialog-content-out $duration-close $ease-out-quad both;
+  }
+
+  // 動きを減らす設定: 動きは無くすが、アンマウント用にanimationendは発火させる
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    .dialog-content {
+      animation-duration: 0.01ms !important;
+    }
+  }
 }
 
 .dialog-container {
@@ -17,6 +76,7 @@
   height: 100%;
   padding: 0 2.5rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .dialog-content {
@@ -39,6 +99,11 @@
   border: none;
   background: none;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
 
   > span {
     display: block;
@@ -63,22 +128,10 @@
   color: #000;
 }
 
-.dialog-thumb {
-  aspect-ratio: 4 / 3;
-  overflow: clip;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-}
-
 .dialog-iframe {
   iframe {
+    display: block;
     width: 100%;
-    height: 100%;
     border: 0;
     aspect-ratio: 16 / 9;
   }

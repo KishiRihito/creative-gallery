@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import style from './dialog.module.scss';
 import type { ContentItem } from "@/app/types/content";
@@ -16,93 +16,102 @@ interface DialogProps {
 // TypeScriptのiframe型に未定義のため、スプレッドで付与する
 const credentiallessAttr = { credentialless: '' } as React.IframeHTMLAttributes<HTMLIFrameElement>;
 
-export const Dialog = ({ isOpen, setIsOpen, onClose, content }: React.PropsWithChildren<DialogProps>) => {
+export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => {
   const { lenis } = useLenis();
-  // モーダル外をクリックした時の処理
-  const ref = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        ref.current &&
-        !(ref.current as HTMLElement).contains(e.target as Node)
-      ) {
-        setIsOpen(false);
-        // モーダルを閉じる時にスクロールを再開
-        if (lenis) {
-          lenis.start();
-        }
-      }
-    };
+  const titleId = useId();
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [lenis, setIsOpen]);
+  // 閉じるアニメーションの間はDOMに残す
+  const [isMounted, setIsMounted] = useState(isOpen);
+  if (isOpen && !isMounted) setIsMounted(true);
+
+  const close = useCallback(() => {
+    setIsOpen(false);
+    onClose?.();
+  }, [setIsOpen, onClose]);
 
   // 背面のスクロールを禁止
   useEffect(() => {
-    if (!lenis) return;
-    
-    if (isOpen) {
-      // モーダルを開く時にスクロールを停止
-      lenis.stop();
-    } else {
-      // モーダルを閉じる時にスクロールを再開
-      lenis.start();
-    }
-    
-    return () => {
-      // コンポーネントのアンマウント時にスクロールを再開
-      if (lenis) lenis.start();
-    };
+    if (!lenis || !isOpen) return;
+    lenis.stop();
+    return () => lenis.start();
   }, [isOpen, lenis]);
 
-  return (
-    <>
-    { isOpen && (
-      <div className={style['dialog-overlay']} >
-        <div className={style['dialog-container']}>
-          <div className={style['dialog-content']}>
-            <h2 className={style['dialog-title']}>{content.title}</h2>
-            {/* {content.thumbnail && (
-              <div className={style['dialog-thumb']}>
-                <img src={content.thumbnail} alt={content.title} />
-              </div>
-            )} */}
-            {content.embedUrl && (
-              <div className={style['dialog-iframe']}>
-                <iframe
-                  src={content.embedUrl}
-                  title={content.title}
-                  allow="cross-origin-isolated"
-                  // COEP下でもCOEP未設定の外部文書(StackBlitz)を埋め込めるようにする(Chrome 110+)
-                  {...credentiallessAttr}
-                  allowFullScreen
-                  sandbox='allow-same-origin allow-scripts'
-                ></iframe>
-              </div>
-            )}
-            {content.description && (
-              <p className={style['dialog-description']}>{content.description}</p>
-            )}
+  // Escで閉じる / 開閉時のフォーカス管理
+  useEffect(() => {
+    if (!isOpen) return;
 
-            <button
-              className={style['dialog-closeBtn']}
-              onClick={() => {
-                setIsOpen(false);
-                // モーダルを閉じる時にスクロールを再開
-                if (lenis) lenis.start();
-                if (onClose) onClose();
-              }}
-              aria-label="閉じる"
-            >
-              <span></span><span></span>
-            </button>
-          </div>
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    closeBtnRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, close]);
+
+  if (!isMounted) return null;
+
+  return (
+    <div
+      className={style['dialog-overlay']}
+      data-state={isOpen ? 'open' : 'closed'}
+      // オーバーレイ自体(=モーダル外)のクリックのみ閉じる
+      onClick={(e) => {
+        if (e.target === e.currentTarget) close();
+      }}
+      onAnimationEnd={(e) => {
+        // 子要素のアニメーション終了は無視し、閉じアニメ完了時のみアンマウント
+        if (e.target === e.currentTarget && !isOpen) setIsMounted(false);
+      }}
+    >
+      <div
+        className={style['dialog-container']}
+        // コンテナの余白部分のクリックも「モーダル外」として扱う
+        onClick={(e) => {
+          if (e.target === e.currentTarget) close();
+        }}
+      >
+        <div
+          className={style['dialog-content']}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+        >
+          <h2 id={titleId} className={style['dialog-title']}>{content.title}</h2>
+          {content.embedUrl && (
+            <div className={style['dialog-iframe']}>
+              <iframe
+                src={content.embedUrl}
+                title={content.title}
+                allow="cross-origin-isolated"
+                // COEP下でもCOEP未設定の外部文書(StackBlitz)を埋め込めるようにする(Chrome 110+)
+                {...credentiallessAttr}
+                allowFullScreen
+                sandbox="allow-same-origin allow-scripts"
+              />
+            </div>
+          )}
+          {content.description && (
+            <p className={style['dialog-description']}>{content.description}</p>
+          )}
+
+          <button
+            ref={closeBtnRef}
+            type="button"
+            className={style['dialog-closeBtn']}
+            onClick={close}
+            aria-label="閉じる"
+          >
+            <span></span><span></span>
+          </button>
         </div>
       </div>
-    )}
-    </>
+    </div>
   );
 };
