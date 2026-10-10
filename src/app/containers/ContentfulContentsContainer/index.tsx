@@ -5,14 +5,8 @@ import { createClient } from 'contentful';
 
 import { GalleryList } from "@/app/components/GalleryList";
 import { GalleryItem } from "@/app/components/GalleryItem";
-
-interface ContentItem {
-  id: string;
-  title: string;
-  thumbnail?: string;
-  description?: string;
-  embedUrl?: string;
-}
+import { toContentItem, type ContentItem } from "@/app/types/content";
+import type { TypeAnimationPostSkeleton } from "@/app/types/contentful";
 
 // クライアントサイドでContentfulクライアントを作成
 const getClient = () => {
@@ -29,19 +23,11 @@ export const ContentfulContentsContainer = () => {
     const fetchContents = async () => {
       try {
         const client = getClient();
-        const entries = await client.getEntries({
+        const entries = await client.withoutUnresolvableLinks.getEntries<TypeAnimationPostSkeleton>({
           content_type: 'animationPost',
         });
 
-        const fetchedContents = entries.items.map((item: any) => ({
-          id: item.sys.id,
-          title: item.fields.title,
-          thumbnail: item.fields.thumb?.fields?.file?.url,
-          description: item.fields.description,
-          embedUrl: item.fields.embedUrl
-        }));
-
-        setContents(fetchedContents);
+        setContents(entries.items.map(toContentItem));
       } catch (error) {
         console.error('Error fetching contents:', error);
       }
