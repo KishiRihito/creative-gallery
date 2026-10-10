@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run contentful:types || echo '[predev] Contentful型の更新に失敗したため既存の型で起動します'",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

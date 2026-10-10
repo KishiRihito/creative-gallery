@@ -1,1 +1,1 @@
-export type * from "./TypeAnimationPost";
+export type { TypeAnimationPost, TypeAnimationPostFields, TypeAnimationPostSkeleton } from "./TypeAnimationPost";

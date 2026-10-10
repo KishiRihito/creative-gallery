@@ -1,11 +1,10 @@
-// `npm run contentful:types` で Contentful のコンテンツモデルから再生成される(cf-content-types-generator の出力形式)
 import type { ChainModifiers, Entry, EntryFieldTypes, EntrySkeletonType, LocaleCode } from "contentful";
 
 export interface TypeAnimationPostFields {
-  title: EntryFieldTypes.Symbol;
-  thumb?: EntryFieldTypes.AssetLink;
-  description?: EntryFieldTypes.Text;
-  embedUrl?: EntryFieldTypes.Symbol;
+    title: EntryFieldTypes.Symbol;
+    thumb?: EntryFieldTypes.AssetLink;
+    embedUrl?: EntryFieldTypes.Symbol;
+    description?: EntryFieldTypes.Text;
 }
 
 export type TypeAnimationPostSkeleton = EntrySkeletonType<TypeAnimationPostFields, "animationPost">;
