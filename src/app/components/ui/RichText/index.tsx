@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
 import { documentToReactComponents, type Options } from '@contentful/rich-text-react-renderer';
-import { BLOCKS, INLINES, MARKS, type Document, type Text } from '@contentful/rich-text-types';
+import { BLOCKS, INLINES, MARKS, type Document } from '@contentful/rich-text-types';
 
 import style from './richText.module.scss';
 
@@ -9,18 +9,14 @@ interface RichTextProps {
   className?: string;
 }
 
-// 段落内がすべてcode装飾のテキストならコードブロックとみなす
-const isCodeBlock = (content: Document['content'][number]['content']) =>
-  content.length > 0 &&
-  content.every((node) => node.nodeType === 'text' && (node as Text).marks.some((mark) => mark.type === MARKS.CODE));
-
 const options: Options = {
   renderMark: {
     [MARKS.CODE]: (text) => <code className={style['code']}>{text}</code>,
   },
   renderNode: {
+    // コードブロックは変換時(utils/richText)に目印を付けている
     [BLOCKS.PARAGRAPH]: (node, children) =>
-      isCodeBlock(node.content) ? <pre className={style['pre']}>{children}</pre> : <p>{children}</p>,
+      node.data.isCodeBlock ? <pre className={style['pre']}>{children}</pre> : <p>{children}</p>,
     [INLINES.HYPERLINK]: (node, children) => (
       <a href={node.data.uri} target="_blank" rel="noopener noreferrer">{children}</a>
     ),
