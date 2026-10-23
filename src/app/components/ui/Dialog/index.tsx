@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import style from './dialog.module.scss';
 import type { ContentItem } from "@/app/types/content";
 import { useLenis } from '@/app/contexts/LenisContext';
+import { RichText } from '@/app/components/ui/RichText';
 
 interface DialogProps {
   isOpen: boolean;
@@ -98,7 +99,7 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => 
             </div>
           )}
           {content.description && (
-            <p className={style['dialog-description']}>{content.description}</p>
+            <RichText document={content.description} className={style['dialog-description']} />
           )}
 
           <button
