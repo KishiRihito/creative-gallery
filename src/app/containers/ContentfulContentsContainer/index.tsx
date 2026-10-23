@@ -27,7 +27,7 @@ export const ContentfulContentsContainer = () => {
           content_type: 'animationPost',
         });
 
-        setContents(entries.items.map(toContentItem));
+        setContents(await Promise.all(entries.items.map(toContentItem)));
       } catch (error) {
         console.error('Error fetching contents:', error);
       }

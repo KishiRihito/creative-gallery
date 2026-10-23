@@ -1,0 +1,88 @@
+.rich-text {
+  > * + * {
+    margin-block-start: 0.75em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    line-height: 1.4;
+  }
+
+  h1 { font-size: 1.5em; }
+  h2 { font-size: 1.3em; }
+  h3 { font-size: 1.15em; }
+  h4, h5, h6 { font-size: 1em; }
+
+  strong, b {
+    font-weight: bold;
+  }
+
+  em, i {
+    font-style: italic;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  ul, ol {
+    padding-inline-start: 1.5em;
+  }
+
+  ul { list-style: disc; }
+  ol { list-style: decimal; }
+
+  li + li {
+    margin-block-start: 0.25em;
+  }
+
+  blockquote {
+    padding-inline-start: 1em;
+    border-inline-start: 3px solid #ccc;
+    color: #555;
+  }
+
+  hr {
+    border: none;
+    border-block-start: 1px solid #ddd;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    padding: 0.4em 0.6em;
+    border: 1px solid #ddd;
+    text-align: start;
+  }
+
+  // リスト・引用の中の段落は余白を詰める
+  li > p, blockquote > p {
+    margin: 0;
+  }
+}
+
+.code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background-color: #f2f2f2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875em;
+}
+
+.pre {
+  overflow-x: auto;
+  padding: 0.75em 1em;
+  border-radius: 6px;
+  background-color: #f2f2f2;
+  line-height: 1.5;
+
+  .code {
+    padding: 0;
+    background: none;
+  }
+}
