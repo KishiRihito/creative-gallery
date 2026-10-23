@@ -73,6 +73,8 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => 
       ref={overlayRef}
       className={style['dialog-overlay']}
       data-state={isOpen ? 'open' : 'closed'}
+      // 閉じアニメーション中はキーボードでもフォーカスできないようにする
+      inert={!isOpen}
       // オーバーレイ自体(=モーダル外)のクリックのみ閉じる
       onClick={(e) => {
         if (e.target === e.currentTarget) close();
