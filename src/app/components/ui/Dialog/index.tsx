@@ -20,6 +20,7 @@ const credentiallessAttr = { credentialless: '' } as React.IframeHTMLAttributes<
 export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => {
   const { lenis } = useLenis();
   const titleId = useId();
+  const overlayRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   // 閉じるアニメーションの間はDOMに残す
@@ -43,6 +44,13 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => 
     if (!isOpen) return;
 
     const previouslyFocused = document.activeElement as HTMLElement | null;
+
+    // 背面を操作・フォーカス不可にし、Tabでモーダル外に出ないようにする
+    const background = Array.from(document.body.children).filter(
+      (el) => el !== overlayRef.current && !el.hasAttribute('inert'),
+    );
+    background.forEach((el) => el.setAttribute('inert', ''));
+
     closeBtnRef.current?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -52,6 +60,8 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => 
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      // inertのままだとフォーカスを戻せないため、先に解除する
+      background.forEach((el) => el.removeAttribute('inert'));
       previouslyFocused?.focus?.();
     };
   }, [isOpen, close]);
@@ -60,6 +70,7 @@ export const Dialog = ({ isOpen, setIsOpen, onClose, content }: DialogProps) => 
 
   return (
     <div
+      ref={overlayRef}
       className={style['dialog-overlay']}
       data-state={isOpen ? 'open' : 'closed'}
       // オーバーレイ自体(=モーダル外)のクリックのみ閉じる
